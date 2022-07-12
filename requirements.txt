@@ -4,3 +4,4 @@ django-rest-knox
 django-health-check
 faker
 faker_vehicle
+gunicorn
