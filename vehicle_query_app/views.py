@@ -11,7 +11,7 @@ from .serializers import VehicleDetailSerializer
 
 from knox.views import LoginView as KnoxLoginView
 
-logger = logging.getLogger('DjangoDemoViewLogger')
+logger = logging.getLogger('ViewLogger')
 
 
 class LoginView(KnoxLoginView):

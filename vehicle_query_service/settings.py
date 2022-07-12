@@ -101,9 +101,15 @@ REST_KNOX = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s %(levelname).1s %(filename)s:%(lineno)3d - %(message)s"
+        },
+    },
     'handlers': {
         'verbose': {
             'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'verbose',
             'filename': 'logs/vehicle_query_service.log',
             'when': "midnight",
             'backupCount': 5,
