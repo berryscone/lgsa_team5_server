@@ -53,8 +53,12 @@ WSGI_APPLICATION = 'vehicle_query_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'sqlite3.db',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'deuk4qkmuc9r07',
+        'USER': 'seqyxpdbxcadyn',
+        'PASSWORD': '95cc0658a115f3807fba283108c0d2b156b5ab3436c824263b6d329c2e0df2f4',
+        'HOST': 'ec2-3-222-74-92.compute-1.amazonaws.com',
+        'PORT': 5432
     }
 }
 
