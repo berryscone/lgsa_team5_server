@@ -30,23 +30,41 @@ class VehicleDetailView(views.APIView):
 
         plate_number = params[self.GET_KEY]
         plate_number = plate_number.split('/')[0]
-        logger.info(f'plate number: {plate_number}')
+        user = request.user
 
-        # TODO: 매치 종류, 카운트 로깅 (유저별, 전체)
+        # Try exact match first
         st = time.time()
         vehicles = VehicleDetail.objects.filter(plate_number=plate_number)
-        count = vehicles.count()
         retrieve_elapsed = (time.time() - st) * 1000
-        logger.info(f'elapsed time to retrieve VehicleDetail: {retrieve_elapsed:.3f} ms')
+        logger.debug(f'elapsed time for exact match: {retrieve_elapsed:.3f} ms')
 
-        is_exact = True
-        serializer = VehicleDetailSerializer(vehicles, many=True)
+        if vehicles.count() > 0:
+            logger.info(f'exact match for {plate_number} by {user.username}')
+            response = self.make_response(plate_number, True, retrieve_elapsed, vehicles)
+            return response
 
-        # TODO: exact match 실패 시 partial match 진행
-        # is_exact = False
+        # If exact match fails, try partial match
+        st = time.time()
+        vehicles = VehicleDetail.objects.filter(plate_number__trigram_word_similar=plate_number)
+        retrieve_elapsed = (time.time() - st) * 1000
+        logger.debug(f'elapsed time for partial match: {retrieve_elapsed:.3f} ms')
 
-        response = dict(is_exact=is_exact,
-                        count=count,
-                        retrieve_elapsed_ms=retrieve_elapsed,
+        if vehicles.count() > 0:
+            logger.info(f'partial match for {plate_number} by {user.username}')
+            response = self.make_response(plate_number, False, retrieve_elapsed, vehicles)
+            return response
+
+        # If both exact and partial failed, no match
+        logger.info(f'no match for {plate_number} by {user.username}')
+        response = self.make_response(plate_number, False, retrieve_elapsed, vehicles)
+        return response
+
+    @staticmethod
+    def make_response(plate_number: str, is_exact: bool, elapsed_time_ms: float, queries):
+        serializer = VehicleDetailSerializer(queries, many=True)
+        response = dict(plate_number=plate_number,
+                        is_exact=is_exact,
+                        count=queries.count(),
+                        retrieve_elapsed_ms=elapsed_time_ms,
                         vehicle_details=serializer.data)
         return JsonResponse(response, safe=False)
