@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@xa3q7=z6^4hjn@uu#v3#r4*z_c*2%837#gg3qdrd7+e)x_w_i'
 DEBUG = False
@@ -103,21 +104,37 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     "formatters": {
-        "verbose": {
+        "default": {
             "format": "%(asctime)s %(levelname).1s %(filename)s:%(lineno)3d - %(message)s"
         },
     },
+    'filters': {
+        'info_filter': {
+            '()': 'vehicle_query_service.custom_filters.LevelFilter',
+            'level': logging.INFO,
+        }
+    },
     'handlers': {
-        'verbose': {
+        'debug': {
+            'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'formatter': 'verbose',
-            'filename': 'logs/vehicle_query_service.log',
+            'formatter': 'default',
+            'filename': 'logs/django_debug.log',
             'when': "midnight",
             'backupCount': 5,
         },
+        'info': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'default',
+            'filters': ['info_filter'],
+            'filename': 'logs/django_info.log',
+            'when': "midnight",
+            'backupCount': 5,
+        }
     },
     'root': {
-        'handlers': ['verbose'],
-        'level': 'INFO',
+        'handlers': ['debug', 'info'],
+        'level': 'DEBUG',
     },
 }
