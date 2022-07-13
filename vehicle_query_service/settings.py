@@ -1,4 +1,5 @@
 import logging
+from datetime import timedelta
 from pathlib import Path
 
 
@@ -97,7 +98,7 @@ REST_FRAMEWORK = {
 }
 
 REST_KNOX = {
-    'TOKEN_TTL': None  # without expiry time
+    'TOKEN_TTL': timedelta(hours=24)
 }
 
 LOGGING = {
