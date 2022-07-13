@@ -131,10 +131,13 @@ LOGGING = {
             'filename': 'logs/django_info.log',
             'when': "midnight",
             'backupCount': 5,
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
         }
     },
     'root': {
-        'handlers': ['debug', 'info'],
+        'handlers': ['debug', 'info', 'console'],
         'level': 'DEBUG',
     },
 }
